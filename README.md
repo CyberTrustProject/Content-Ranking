@@ -6,7 +6,7 @@ The Content Ranking Engine of the Crawling Service component.
 
 There are two ways to operate this tool:
 
-1. Through Docker (recommended)
+1. Through Docker *(recommended)*
 2. As a standalone CLI tool
 
 The tool requires a configured [MongoDB]('https://www.mongodb.com/') database to operate.
@@ -88,8 +88,7 @@ Commands:
 1. ```calc-score```:
     Computes the Relevance Score and Word Coverage of the crawled documents.
 
-    ```shell
-    Usage: content_rank.py calc-score [OPTIONS]
+    <pre>Usage: content_rank.py calc-score [OPTIONS]
 
     Options:
         --tagfile TEXT               The name of the file that contains the Tags (default "_iotsec_tags.txt")
@@ -105,25 +104,25 @@ Commands:
         --post_window INTEGER        The number of posts to process (default 0 to process entire collection)
         --iteration INTEGER          The iteration number of Content Ranking (default 0)
         --help                       Show the [Options] and exit
-    ```
+    </pre>
 
 2. ```update-corpus```:
     Donwload the training files, preprocess them, and write them into a corpus.
 
-    ```shell
+    <pre>
     Usage: content_rank.py update-corpus [OPTIONS]
 
     Options:
         --tagfile TEXT               The name of the file that contains the Tags (default "_iotsec_tags.txt")
         --help                       Show the [Options] and exit
-    ```
+    </pre>
 
 3. ```train-model```:
     Train the Word2Vec model.
 
     *(Note: for information regarding the Word2Vec hyperparameters, refer to this [link](https://radimrehurek.com/gensim/models/word2vec.html))*
 
-    ```shell
+    <pre>
     Usage: content_rank.py train-model [OPTIONS]
 
     Options:
@@ -133,14 +132,14 @@ Commands:
         --min_count INTEGER          The "min_count" hyperparameter of the Word2Vec model (default 1)
         --workers INTEGER            The "workers" hyperparameter of the Word2Vec model (default 10)
         --help                       Show the [Options] and exit
-    ```
+    </pre>
 
 4. ```create-vocab```:
     Create the topic vocabulary and add it to the mongoDB collection.
 
-    ```shell
+    <pre>
     Usage: content_rank.py create-vocab [OPTIONS]
-    
+
     Options:
         --tagfile TEXT               The name of the file that contains the Tags (default "_iotsec_tags.txt")
         --db_voc TEXT                The name of the Vocabulary Database (default "IoTsecDB")
@@ -151,30 +150,30 @@ Commands:
         --ip TEXT                    The IP where mongoDB is hosted (default "127.0.0.1")
         --topn INTEGER               The top N most similar words for each Tag (default 10)
         --help                       Show the [Options] and exit
-    ```
+    </pre>
 
 5. ```update-retrain```:
     Re-run the entire process of downloading, extracting, preprocessing, training & add to collection *(required command for first run)*.
 
-    ```shell
-        Usage: content_rank.py  update-retrain [OPTIONS]   
-        
-        Options:
-        --tagfile TEXT               The name of the file that contains the Tags (default "_iotsec_tags.txt")
-        --corpusfile TEXT            The name of the file that contains the Corpus (default "__iotsec_corpus.txt")
-        --db_voc TEXT                The name of the Vocabulary Database (default "IoTsecDB")
-        --collection_voc TEXT        The name of the vocabulary mongoDB collection (default "iotsec_vocab_top10")
-        --collection_topic_vec TEXT  The name of the topic vector mongoDB collection (default "topic_vectors10")
-        --username TEXT              The username to connect to mongoDB (default --empty--)
-        --password TEXT              The password to connect to mongoDB (default --empty--)
-        --ip TEXT                    The IP where mongoDB is hosted (default "127.0.0.1")
-        --topn INTEGER               The top N most similar words for each Tag (choose between 5, 10, 15)
-        --dimensions INTEGER         The "dimensions" hyperparameter of the Word2Vec model (default 150)
-        --window INTEGER             The "window" hyperparameter of the Word2Vec model (default 5)
-        --min_count INTEGER          The "min_count" hyperparameter of the Word2Vec model (default 1)
-        --workers INTEGER            The "workers" hyperparameter of the Word2Vec model (default 10)
-        --help                       Show the [Options] and exit
-    ```
+    <pre>
+    Usage: content_rank.py  update-retrain [OPTIONS]
+
+    Options:
+    --tagfile TEXT               The name of the file that contains the Tags (default "_iotsec_tags.txt")
+    --corpusfile TEXT            The name of the file that contains the Corpus (default "__iotsec_corpus.txt")
+    --db_voc TEXT                The name of the Vocabulary Database (default "IoTsecDB")
+    --collection_voc TEXT        The name of the vocabulary mongoDB collection (default "iotsec_vocab_top10")
+    --collection_topic_vec TEXT  The name of the topic vector mongoDB collection (default "topic_vectors10")
+    --username TEXT              The username to connect to mongoDB (default --empty--)
+    --password TEXT              The password to connect to mongoDB (default --empty--)
+    --ip TEXT                    The IP where mongoDB is hosted (default "127.0.0.1")
+    --topn INTEGER               The top N most similar words for each Tag (choose between 5, 10, 15)
+    --dimensions INTEGER         The "dimensions" hyperparameter of the Word2Vec model (default 150)
+    --window INTEGER             The "window" hyperparameter of the Word2Vec model (default 5)
+    --min_count INTEGER          The "min_count" hyperparameter of the Word2Vec model (default 1)
+    --workers INTEGER            The "workers" hyperparameter of the Word2Vec model (default 10)
+    --help                       Show the [Options] and exit
+    </pre>
 
 ## References
 
@@ -186,6 +185,6 @@ For more information regarding the functionality of the tool, refer to the follo
 
 ## Who do I talk to?
 
-This repository is maintained by **Paris Koloveas** from UoP
+This repository is maintained by **Paris Koloveas**, University of Peloponnese.
 
 * Email: pkoloveas@uop.gr
