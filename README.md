@@ -183,7 +183,7 @@ For more information regarding the functionality of the tool, refer to the follo
 
 2. Paris Koloveas, Thanasis Chantzios, Sofia Alevizopoulou, Spiros Skiadopoulos, and Christos Tryfonopoulos. inTIME: A Machine Learning-Based Framework for Gathering and Leveraging Web Data to Cyber-Threat Intelligence. *In Electronics* 10(7): 818, 2021.
 
-## Who do I talk to?
+## Contact Information
 
 This repository is maintained by **Paris Koloveas**, University of Peloponnese.
 
