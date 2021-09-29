@@ -21,6 +21,7 @@ default_window = 5
 default_min_count = 1
 default_workers = 10
 default_post_win = 0
+default_iteration_number = 0
 
 
 @click.group()
@@ -28,9 +29,6 @@ def main():
     pass
 
 
-#
-# if update_corpus then Data Process -:also needs xml_download func:-
-#
 @main.command()
 @click.option(
     '--tagfile',
@@ -49,9 +47,6 @@ def update_corpus(tagfile):
     print('Runtime: ' + str(dt.now() - startTime))
 
 
-#
-# if train_model then Model Trainer
-#
 @main.command()
 @click.option(
     '--corpusfile',
@@ -63,21 +58,25 @@ def update_corpus(tagfile):
     '--dimensions',
     type=click.INT,
     default=default_dimensions,
+    help="The \"dimensions\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--window',
     type=click.INT,
-    default=default_window
+    default=default_window,
+    help="The \"window\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--min_count',
     type=click.INT,
-    default=default_min_count
+    default=default_min_count,
+    help="The \"min_count\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--workers',
     type=click.INT,
-    default=default_workers
+    default=default_workers,
+    help="The \"workers\" hyperparameter of the Word2Vec model"
 )
 def train_model(corpusfile, dimensions, window, min_count, workers):
     """Train the word2vec model"""
@@ -92,9 +91,6 @@ def train_model(corpusfile, dimensions, window, min_count, workers):
     print('Runtime: ' + str(dt.now() - startTime))
 
 
-#
-# if create_vocab then Topic Vocabulary Creator
-#
 @main.command()
 @click.option(
     '--tagfile',
@@ -105,7 +101,8 @@ def train_model(corpusfile, dimensions, window, min_count, workers):
 @click.option(
     '--topn',
     type=click.INT,
-    default=default_topn
+    default=default_topn,
+    help="The top N most similar words for each Tag"
 )
 @click.option(
     '--db_voc',
@@ -176,9 +173,6 @@ def create_vocab(tagfile, topn, db_voc, collection_voc, collection_topic_vec, us
     print('Runtime: ' + str(dt.now() - startTime))
 
 
-#
-# if update_retrain then Update Retrain
-#
 @main.command()
 @click.option(
     '--tagfile',
@@ -195,32 +189,39 @@ def create_vocab(tagfile, topn, db_voc, collection_voc, collection_topic_vec, us
 @click.option(
     '--topn',
     type=click.INT,
-    default=default_topn
+    default=default_topn,
+    help="The top N most similar words for each Tag"
 )
 @click.option(
     '--dimensions',
     type=click.INT,
-    default=default_dimensions
+    default=default_dimensions,
+    help="The \"dimensions\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--window',
     type=click.INT,
-    default=default_window
+    default=default_window,
+    help="The \"window\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--min_count',
     type=click.INT,
-    default=default_min_count
+    default=default_min_count,
+    help="The \"min_count\" hyperparameter of the Word2Vec model"
 )
 @click.option(
     '--workers',
     type=click.INT,
-    default=default_workers
+    default=default_workers,
+    help="The \"workers\" hyperparameter of the Word2Vec model"
+
 )
 @click.option(
     '--db_voc',
     type=click.STRING,
-    default=default_db_voc
+    default=default_db_voc,
+    help="The name of the Vocabulary Database"
 )
 @click.option(
     '--collection_voc',
@@ -281,14 +282,12 @@ def update_retrain(tagfile, corpusfile, topn, dimensions, window, min_count, wor
     print('Runtime: ' + str(dt.now() - startTime))
 
 
-#
-# if calc-score then Post Relevance (for window)
-#
 @main.command()
 @click.option(
     '--post_window',
     type=click.INT,
-    default=default_post_win
+    default=default_post_win,
+    help="The number of posts to process (defaults to 0 to process entire collection)"
 )
 @click.option(
     '--tagfile',
@@ -299,7 +298,8 @@ def update_retrain(tagfile, corpusfile, topn, dimensions, window, min_count, wor
 @click.option(
     '--topn',
     type=click.INT,
-    default=default_topn
+    default=default_topn,
+    help="The top N most similar words for each Tag"
 )
 @click.option(
     '--db_voc',
@@ -352,7 +352,8 @@ def update_retrain(tagfile, corpusfile, topn, dimensions, window, min_count, wor
 @click.option(
     '--iteration',
     type=click.INT,
-    help="The iteration number of Content Ranking"
+    default=default_iteration_number,
+    help="The iteration number of Content Ranking (starts from 0 by default)"
 )
 def calc_score(post_window, tagfile, topn, db_voc, collection_voc, collection_topic_vec, db_crawl, collection_crawl, username, password, ip, iteration):
     """Computes the Similarity Score of the crawlDB Posts for a specified number of Posts"""
