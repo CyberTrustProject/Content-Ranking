@@ -5,6 +5,7 @@ import re
 import unicodedata
 import logging
 import pickle
+import shutil
 import numpy as np
 import xml.etree.ElementTree as ET
 from gensim.models import KeyedVectors, Word2Vec
@@ -16,6 +17,8 @@ from glob2 import glob
 from collections import Counter
 from pymongo import MongoClient
 from bson.binary import Binary
+from requests import get
+from pyunpack import Archive
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
 
@@ -40,6 +43,7 @@ class LoadSentences(object):
 
 def update_retrain_all(tagfile, corpusfile, collection_voc, collection_topic_vec, topn, dimensions, window, min_count, workers):
     """Re-runs the entire process of extracting, preprocessing, training & add to collection"""
+    download_stackexchange_data()
     xml_extraction()
     mwe = create_multiword_tags(tagfile=tagfile)
     data_process(tokenizer=mwe)
@@ -47,6 +51,51 @@ def update_retrain_all(tagfile, corpusfile, collection_voc, collection_topic_vec
     drop_mongo_collection(collection=collection_voc)
     create_topic_dict(tagfile=tagfile, topn=topn, collection=collection_voc)
     compute_topic_vec(collection_voc=collection_voc, collection_topic_vec=collection_topic_vec)
+
+
+def download_stackexchange_data():
+    """Downloads and extracts the Stack Exchange XML files"""
+    urls = [
+        "https://archive.org/download/stackexchange/iot.stackexchange.com.7z",
+        "https://archive.org/download/stackexchange/raspberrypi.stackexchange.com.7z",
+        "https://archive.org/download/stackexchange/arduino.stackexchange.com.7z",
+        "https://archive.org/download/stackexchange/security.stackexchange.com.7z"
+    ]
+
+    filenames = [url.split('/')[-1].split('.')[0] + ".7z" for url in urls]
+    folder_names = [filename.split('.')[0] for filename in filenames]
+
+    keep_list = ["Posts.xml", "Tags.xml", "Comments.xml"]
+
+    for url, filename, folder_name in zip(urls, filenames, folder_names):
+        folder_path = os.path.join('stack-exchange-xml-files', folder_name)
+        if not os.path.isdir(folder_path):
+            os.mkdir(folder_path)
+
+        # Download 7z file
+        print(f"Downloading {filename}...")
+        r = get(url)
+
+        with open(os.path.join('stack-exchange-xml-files', filename), 'wb') as f:
+            f.write(r.content)
+
+        # Extract 7z file
+        print(f"Extracting {filename}...")
+        Archive(os.path.join('stack-exchange-xml-files', filename)).extractall(folder_path)
+
+        # Remove any unnecessary xml files
+        remove_list = list(set(os.listdir(folder_path)) - set(keep_list))
+
+        for f in keep_list:
+            os.rename(os.path.join(folder_path, f), os.path.join(folder_path, f"{folder_name}_{f}"))
+
+        for f in remove_list:
+            os.remove(os.path.join(folder_path, f))
+
+        for f in os.listdir(folder_path):
+            shutil.move(os.path.join(folder_path, f), os.path.join('stack-exchange-xml-files', f))
+
+        os.rmdir(folder_path)
 
 
 def xml_extraction():
@@ -327,8 +376,6 @@ def create_topic_dict(tagfile, topn, collection):
 
 def connect_to_mongo_collection(db_name, collection_name, username, password, ip):
     """Connects to mongoDB collection"""
-    # client = MongoClient("mongodb+srv://paris:ClassifierEvaluationProject_1@cluster0-wdtr4.mongodb.net/")
-    # client = MongoClient()
     client = MongoClient(
         host=ip,
         username=username,

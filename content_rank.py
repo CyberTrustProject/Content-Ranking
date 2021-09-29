@@ -10,6 +10,9 @@ default_corpusfile = '__iotsec_corpus.txt'
 default_db_crawl = 'CrawlDB'
 default_collection_crawl = 'crawl_collection'
 default_db_voc = 'IoTsecDB'
+default_username = ''
+default_password = ''
+default_ip = '127.0.0.1'
 default_topn = 10
 default_collection_voc = 'iotsec_vocab_top' + str(default_topn)
 default_collection_topic_vec = 'topic_vectors' + str(default_topn)
@@ -36,8 +39,9 @@ def main():
     help="The name of the file that contains the Tags"
 )
 def update_corpus(tagfile):
-    """Preprocess the training files and write them into a corpus"""
+    """Donwload the training files, preprocess them, and write them into a corpus"""
     startTime = dt.now()
+    func.download_stackexchange_data()
     func.xml_extraction()
     func.data_process(
         tokenizer=func.create_multiword_tags(tagfile)
@@ -124,16 +128,19 @@ def train_model(corpusfile, dimensions, window, min_count, workers):
 @click.option(
     '--username',
     type=click.STRING,
+    default=default_username,
     help="The username to connect to mongoDB"
 )
 @click.option(
     '--password',
     type=click.STRING,
+    default=default_password,
     help="The password to connect to mongoDB"
 )
 @click.option(
     '--ip',
     type=click.STRING,
+    default=default_ip,
     help="The IP where mongoDB is hosted"
 )
 def create_vocab(tagfile, topn, db_voc, collection_voc, collection_topic_vec, username, password, ip):
@@ -230,20 +237,23 @@ def create_vocab(tagfile, topn, db_voc, collection_voc, collection_topic_vec, us
 @click.option(
     '--username',
     type=click.STRING,
+    default=default_username,
     help="The username to connect to mongoDB"
 )
 @click.option(
     '--password',
     type=click.STRING,
+    default=default_password,
     help="The password to connect to mongoDB"
 )
 @click.option(
     '--ip',
     type=click.STRING,
+    default=default_ip,
     help="The IP where mongoDB is hosted"
 )
 def update_retrain(tagfile, corpusfile, topn, dimensions, window, min_count, workers, db_voc, collection_voc, collection_topic_vec, username, password, ip):
-    """Re-run the entire process of extracting, preprocessing, training & add to collection"""
+    """Re-run the entire process of downloading, extracting, preprocessing, training & add to collection"""
     startTime = dt.now()
     func.update_retrain_all(
         tagfile=tagfile,
@@ -324,16 +334,19 @@ def update_retrain(tagfile, corpusfile, topn, dimensions, window, min_count, wor
 @click.option(
     '--username',
     type=click.STRING,
+    default=default_username,
     help="The username to connect to mongoDB"
 )
 @click.option(
     '--password',
     type=click.STRING,
+    default=default_password,
     help="The password to connect to mongoDB"
 )
 @click.option(
     '--ip',
     type=click.STRING,
+    default=default_ip,
     help="The IP where mongoDB is hosted"
 )
 @click.option(
